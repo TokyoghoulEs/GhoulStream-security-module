@@ -1,5 +1,7 @@
 // 🛡️ GhoulStream Security Module - Build Configuration
-// Configuración de Gradle para integración con GhoulStream Pro
+// Módulo de seguridad con 3 niveles: standard, secure, ultraSecure
+// Compatible con AGP 8.2.2 + Gradle 8.8 + Android 15
+// Configuración según Tarea 15.1, 15.2, 15.4
 
 plugins {
     id 'com.android.library'
@@ -22,7 +24,35 @@ android {
         }
     }
 
+    // ============================================================================
+    // Product Flavors - DEBE coincidir con la app principal
+    // ============================================================================
+    // CRÍTICO: El módulo DEBE tener los mismos flavors que la app
+    // para que Gradle pueda resolver las dependencias correctamente
+    flavorDimensions = ["security"]
+    
+    productFlavors {
+        // Flavor 1: Standard - Sin seguridad (solo stubs)
+        standard {
+            dimension "security"
+        }
+        
+        // Flavor 2: Secure - Seguridad básica
+        secure {
+            dimension "security"
+        }
+        
+        // Flavor 3: UltraSecure - Máxima seguridad
+        ultraSecure {
+            dimension "security"
+        }
+    }
+
     buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -34,15 +64,31 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     
-    // Configurar librerías nativas precompiladas
+    // ============================================================================
+    // Source Sets - Configuración de directorios por flavor
+    // ============================================================================
     sourceSets {
+        // Main - Código compartido por todos los flavors
         main {
+            java.srcDirs = ['src/java']
             jniLibs.srcDirs = ['libs']
         }
         
-        // Configuración para flavor ultraSecure (si existe)
+        // Standard - Sin código adicional (usa fallbacks)
+        standard {
+            // No necesita código adicional
+        }
+        
+        // Secure - Código de seguridad básica
+        secure {
+            java.srcDirs = ['src/java']  // Usa el código principal
+            jniLibs.srcDirs = ['libs']   // Librerías nativas básicas
+        }
+        
+        // UltraSecure - Código de seguridad máxima
         ultraSecure {
-            jniLibs.srcDirs = ['libs', 'libs/ultra']
+            java.srcDirs = ['src/java', 'src/ultra']  // Código principal + ultra
+            jniLibs.srcDirs = ['libs', 'libs/ultra']  // Librerías básicas + ultra
         }
     }
 }
@@ -56,3 +102,13 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+
+// ============================================================================
+// NOTAS IMPORTANTES:
+// ============================================================================
+// 1. Los product flavors DEBEN coincidir exactamente con la app principal
+// 2. Los nombres de flavors son case-sensitive: ultraSecure (no ultrasecure)
+// 3. La dimensión "security" debe ser la misma en app y módulo
+// 4. Este módulo se compila como librería Android (.aar)
+// 5. Las librerías nativas (.so) se incluyen automáticamente en el AAR
+// ============================================================================

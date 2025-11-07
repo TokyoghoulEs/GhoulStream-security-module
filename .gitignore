@@ -1,0 +1,82 @@
+# 🛡️ GhoulStream Security Module - .gitignore
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Android Studio
+.gradle/
+build/
+local.properties
+*.iml
+.externalNativeBuild/
+.cxx/
+
+# NDK (permitir nuestras librerías precompiladas)
+obj/
+# libs/ - Comentado para permitir librerías del módulo
+jni/
+
+# Permitir librerías específicas del módulo
+!libs/
+!libs/*/
+!libs/*/*.so
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test outputs
+test-results/
+coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+# *.so - Comentado para permitir librerías nativas del módulo
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Documentation builds
+docs/_build/

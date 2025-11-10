@@ -479,6 +479,25 @@ public class GhoulStreamSecurity {
     }
     
     /**
+     * Valida firmas usando API legacy (API < 28)
+     * Método separado para aislar el uso de API deprecada
+     */
+    @SuppressWarnings("deprecation") // Necesario para compatibilidad con API < 28
+    private static boolean validateSignaturesLegacy(android.content.pm.PackageManager pm, Context appContext) {
+        try {
+            android.content.pm.PackageInfo packageInfo = pm.getPackageInfo(
+                appContext.getPackageName(), 
+                android.content.pm.PackageManager.GET_SIGNATURES
+            );
+            android.content.pm.Signature[] signatures = packageInfo.signatures;
+            return signatures != null && signatures.length > 0;
+        } catch (Exception e) {
+            Log.e(TAG, "Error validando firmas legacy: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * 🛡️ Detecta acceso root en el dispositivo (para flavor ultraSecure)
      * @return true si se detecta root
      */
@@ -525,14 +544,8 @@ public class GhoulStreamSecurity {
                        packageInfo.signingInfo.getApkContentsSigners().length > 0;
             } else {
                 // API < 28 - usar GET_SIGNATURES (deprecado pero necesario para compatibilidad)
-                @SuppressWarnings("deprecation")
-                android.content.pm.PackageInfo packageInfo = pm.getPackageInfo(
-                    appContext.getPackageName(), 
-                    android.content.pm.PackageManager.GET_SIGNATURES
-                );
-                @SuppressWarnings("deprecation")
-                android.content.pm.Signature[] signatures = packageInfo.signatures;
-                return signatures != null && signatures.length > 0;
+                // Solución moderna: Extraer a método separado con anotación específica
+                return validateSignaturesLegacy(pm, appContext);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error validando integridad: " + e.getMessage());

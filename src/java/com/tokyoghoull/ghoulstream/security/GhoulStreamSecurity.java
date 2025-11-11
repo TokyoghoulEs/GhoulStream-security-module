@@ -530,23 +530,15 @@ public class GhoulStreamSecurity {
         }
         
         try {
-            // Verificar firma de la aplicación con compatibilidad API
+            // Verificar firma de la aplicación (API 28+)
             android.content.pm.PackageManager pm = appContext.getPackageManager();
-            
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                // API 28+ - usar GET_SIGNING_CERTIFICATES
-                android.content.pm.PackageInfo packageInfo = pm.getPackageInfo(
-                    appContext.getPackageName(), 
-                    android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
-                );
-                return packageInfo.signingInfo != null && 
-                       packageInfo.signingInfo.getApkContentsSigners() != null &&
-                       packageInfo.signingInfo.getApkContentsSigners().length > 0;
-            } else {
-                // API < 28 - usar GET_SIGNATURES (deprecado pero necesario para compatibilidad)
-                // Solución moderna: Extraer a método separado con anotación específica
-                return validateSignaturesLegacy(pm, appContext);
-            }
+            android.content.pm.PackageInfo packageInfo = pm.getPackageInfo(
+                appContext.getPackageName(), 
+                android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
+            );
+            return packageInfo.signingInfo != null && 
+                   packageInfo.signingInfo.getApkContentsSigners() != null &&
+                   packageInfo.signingInfo.getApkContentsSigners().length > 0;
         } catch (Exception e) {
             Log.e(TAG, "Error validando integridad: " + e.getMessage());
             return false;

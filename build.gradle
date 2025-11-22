@@ -68,24 +68,25 @@ android {
     // Source Sets - Configuración de directorios por flavor
     // ============================================================================
     sourceSets {
-        // Main - Código compartido por todos los flavors
+        // Main - Código compartido por todos los flavors (SIN librerías nativas)
         main {
             java.srcDirs = ['src/java']
-            jniLibs.srcDirs = ['libs']
+            // NO incluir jniLibs aquí - cada flavor decide si las necesita
         }
         
-        // Standard - Sin código adicional (usa fallbacks)
+        // Standard - Sin seguridad (sin librerías nativas)
         standard {
-            // No necesita código adicional
+            // No necesita código adicional ni librerías nativas
+            // Solo usa stubs/fallbacks en Java
         }
         
-        // Secure - Código de seguridad básica
+        // Secure - Seguridad básica (CON librerías nativas)
         secure {
             java.srcDirs = ['src/java']  // Usa el código principal
-            jniLibs.srcDirs = ['libs']   // Librerías nativas básicas
+            jniLibs.srcDirs = ['libs']   // Librerías nativas básicas (libencryption.so)
         }
         
-        // UltraSecure - Código de seguridad máxima
+        // UltraSecure - Máxima seguridad (CON librerías nativas)
         ultraSecure {
             java.srcDirs = ['src/java', 'src/ultra']  // Código principal + ultra
             jniLibs.srcDirs = ['libs', 'libs/ultra']  // Librerías básicas + ultra
